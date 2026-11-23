@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, mkdirSync, writeFileSync, chmodSync } from 'node:fs';
 import { join } from 'node:path';
 const I = process.env.MAKEFUN_INPUT_DIR ?? '/input', O = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 for (const d of readdirSync(I).sort()) {
@@ -64,7 +64,10 @@ for (const d of readdirSync(I).sort()) {
     else if (op === 82) D[sp++] = ip < q.length ? q[ip++] : -1;
     else if (op === 83) { ex = D[--sp] & 255; break; }
   }
-  mkdirSync(join(O, d), { recursive: true });
+  mkdirSync(join(O, d), { recursive: true, mode: 0o755 });
   writeFileSync(join(O, d, 'stdout.bin'), o.subarray(0, ol));
   writeFileSync(join(O, d, 'exit.txt'), ex + '\n');
+  chmodSync(join(O, d), 0o755);
+  chmodSync(join(O, d, 'stdout.bin'), 0o644);
+  chmodSync(join(O, d, 'exit.txt'), 0o644);
 }
